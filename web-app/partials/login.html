@@ -1,0 +1,110 @@
+<div>
+	<header id="header" ng-controller="NavbarController"><!--header-->
+		<div class="header_top"><!--header_top-->
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="contactinfo">
+							<ul class="nav nav-pills">
+								<li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+								<li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="social-icons pull-right">
+							<ul class="nav navbar-nav">
+								<li><a href=""><i class="fa fa-facebook"></i></a></li>
+								<li><a href=""><i class="fa fa-twitter"></i></a></li>
+								<li><a href=""><i class="fa fa-linkedin"></i></a></li>
+								<li><a href=""><i class="fa fa-dribbble"></i></a></li>
+								<li><a href=""><i class="fa fa-google-plus"></i></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--/header_top-->
+		
+		<div class="header-middle"><!--header-middle-->
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="logo pull-left">
+							<a href="#/"><img src="images/home/logo.png" alt="" /></a>
+						</div>
+					</div>
+					<div class="col-sm-8">
+						<div class="shop-menu pull-right">
+							<ul class="nav navbar-nav">
+								<!-- <li><a href=""><i class="fa fa-user"></i> Account</a></li> -->
+								<li ng-show="loggedIn"><a href="#/wishlist"><i class="fa fa-star"></i> Wishlist</a></li>
+								<li ng-show="loggedIn"><a href=""><i class="fa fa-crosshairs"></i> Checkout</a></li>
+								<li ng-show="loggedIn"><a href="#/cart"><i class="fa fa-shopping-cart"></i> Cart</a></li>
+								<li ng-hide="loggedIn"><a href="#/login"><i class="fa fa-lock"></i> Login</a></li>
+								<li ng-show="loggedIn"><a href=""><i class="fa fa-lock"></i>{{username}}</a></li>
+								<li ng-show="loggedIn" ng-click="logout()"><a href="#/">Logout</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--/header-middle-->
+	
+		<div class="header-bottom"><!--header-bottom-->
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-9">
+						<div class="mainmenu pull-left">
+							<ul class="nav navbar-nav collapse navbar-collapse">
+								<li><a href="#/" class="active">Home</a></li>
+								<li class="dropdown"><a href="">Chocolates<i class="fa fa-angle-down"></i></a>
+                                    <ul role="menu" class="sub-menu">
+                                        <li ng-repeat="choc in chocolate"><a href="">{{choc.name}}</a></li>
+                                    </ul>
+                                </li>
+                                <li> <a href="">Cakes<i class="fa fa-angle-down"></i></a>
+                                	<ul role="menu" class="sub-menu">
+                                        <li ng-repeat="cake in cake"><a href="">{{cake.name}}</a></li>
+                                    </ul>
+                                </li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--/header-bottom-->
+	</header><!--/header-->
+
+	<section id="form" ng-controller="LoginController"><!--form-->
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-4 col-sm-offset-1">
+					<div class="login-form"><!--login form-->
+						<h2>Login to your account</h2>
+						<form action="#">
+							<input type="email" placeholder="E-Mail Address" id="emailId"/>
+							<input type="password" placeholder="Password" id="password"/>
+							<p class="btn btn-default" id="loginBtn">Login</p>
+						</form>
+					</div><!--/login form-->
+				</div>
+				<div class="col-sm-1">
+					<h2 class="or">OR</h2>
+				</div>
+				<div class="col-sm-4">
+					<div class="signup-form"><!--sign up form-->
+						<h2>New User Signup!</h2>
+						<form action="#">
+							<input type="text" placeholder="First Name" id="fname"/>
+							<input type="text" placeholder="Last Name" id="lname"/>
+							<input type="email" placeholder="Email Address" id="email"/>
+							<input type="password" placeholder="Password" id="password2"/>
+							<p class="btn btn-default" id="signupBtn">Signup</p>
+						</form>
+					</div><!--/sign up form-->
+				</div>
+			</div>
+		</div>
+	</section><!--/form-->
+</div>
