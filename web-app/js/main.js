@@ -1,32 +1,25 @@
 /*price range*/
-var app = angular.module('store', ['ngRoute']);
+var app = angular.module('store', ['ngRoute','ngStorage']);
 
-app.factory('thefactory', function ($http) {
+app.controller('productService', function () {
+    var products = [];
+    var selectedProduct = null;
+    var selectedCategory = null;
+});
+
+app.factory('appFactory', function ($http, $localStorage) {
     var factory = {};
+    factory.feedback_sent = false;
     factory.products = {};
-    $http.get('/api/products').success(function (data) {
-        var list = data;
-        list.forEach(function (e) {
-            factory.products[e.id] = e;
-        })
-    });
-
     factory.cart_items = 0;
     factory.cart_amount = 0;
     factory.cart = [];
-    factory.loggedIn = false;
-    factory.user = "Maharshi Gor"
-    factory.wishlist = [{
-        'productId': 19,
-        'name': 'Ronak',
-        'description': 'TheBest',
-        'image': 'images/home/image.jpg',
-        'price': 100
-    }];
+    factory.user = $localStorage.user;
+    factory.loggedIn = (factory.user != null);
 
     factory.setLoggedIn = function (value) {
         factory.loggedIn = value;
-    }
+    };
 
     factory.changeQuantity = function (prodId, quantity) {
         console.log("Quantity Change");
@@ -35,190 +28,250 @@ app.factory('thefactory', function ($http) {
                 if ((factory.cart[i].count + quantity) >= 0) {
                     factory.cart[i].count += quantity;
                     factory.cart[i].totCost = factory.cart[i].price * factory.cart[i].count;
-                    factory.cart_amount = factory.cart_amount + (factory.cart[i].price * quantity);
+                    factory.cart_amount = (parseFloat(factory.cart[i].price) * quantity) + parseFloat(factory.cart_amount);
                 }
             }
         }
     };
 
-    factory.setCartAmount = function () {
+    factory.getCartAmount = function () {
         return factory.cart_amount;
     }
 
-    factory.findProduct = function (prodId) {
-        return factory.products[prodId];
+    factory.findProduct = function (id) {
+        return factory.products[id];
     }
 
-    factory.addProdToCart = function (prodId, price, name, image) {
-        factory.cart_amount = factory.cart_amount + price;
+    factory.resetCart = function () {
+        factory.cart_items = 0;
+        factory.cart_amount = 0;
+        factory.cart = [];
+    }
+
+    factory.addProdToCart = function (id) {
+        price = factory.products[id].sellPrice.toFixed(2);
+        name = factory.products[id].name;
+        factory.cart_amount = parseFloat(price) + factory.cart_amount;
         factory.cart_items++;
-        var find = 0;
-        for (i = 0; i < factory.cart.length; i++) {
-            if (factory.cart[i].productId == prodId) {
-                find = 1;
+        var found = 0;
+        for (i = 0; i < factory.cart.length && !found; i++) {
+            if (factory.cart[i].productId == id) {
+                found = 1;
+                factory.cart[i].count++;
+                factory.cart[i].totCost = parseFloat(factory.cart[i].price) * factory.cart[i].count;
             }
         }
-        if (find == 1) {
-            for (i = 0; i < factory.cart.length; i++) {
-                if (factory.cart[i].productId == prodId) {
-                    factory.cart[i].count++;
-                    factory.cart[i].totCost = factory.cart[i].price * factory.cart[i].count;
-                }
-            }
-            console.log("Match Found");
-        }
-        else {
+        if(!found) {
             factory.cart.push({
-                'productId': prodId,
+                'productId': id,
                 'price': price,
                 'name': name,
                 'count': 1,
-                'image': image,
+                'image': "/images/img" + (id % 7) + ".jpg",
                 'totCost': price
             });
             console.log("Match Not Found");
         }
+        alert(name + " added to Cart")
     };
     return factory;
 });
 
-var categories = [{name: "Mobiles"}, {name: "Laptops"}, {name: "Accesories"}];
-
-app.controller('HeaderController', function (thefactory) {
-    this.cart_items = thefactory.cart_items;
+app.controller('HeaderController', function (appFactory) {
+    this.cart_items = appFactory.cart_items;
 });
 
-app.controller('NavbarController', function ($scope, thefactory) {
-    $scope.loggedIn = thefactory.loggedIn;
+app.controller('NavbarController', function ($scope, appFactory) {
+    $scope.loggedIn = appFactory.loggedIn;
     console.log($scope.loggedIn);
-    $scope.username = thefactory.user;
+    $scope.username = appFactory.user;
     console.log("Navbar Controller");
     $scope.logout = function () {
         $scope.loggedIn = false;
-        thefactory.setLoggedIn(false);
+        appFactory.setLoggedIn(false);
     }
 });
 
-app.controller('CategoriesController', function (thefactory) {
-    this.categories = categories;
-});
+app.controller('ListController', function ($scope, appFactory, $http) {
+    appFactory.feedback_sent = false;
+    $scope.username = appFactory.user;
+    $scope.loggedIn = appFactory.loggedIn;
+    $scope.search = {};
+    $scope.search.name = ""
 
-app.controller('ListController', function ($scope, thefactory) {
-    $scope.username = thefactory.user;
+    $scope.cart_count = function () {
+        return appFactory.cart_items;
+    };
+    
+    $scope.deselect = function() {
+        $scope.search.name = ""
+    }
+
+    $scope.select = function(name) {
+        $scope.search.name = name;
+        console.log($scope.search.name)
+    }
+
     $scope.logout = function () {
         $scope.loggedIn = false;
-        thefactory.loggedIn();
+        appFactory.loggedIn();
     }
-    $scope.products = thefactory.products;
-    $scope.categories = thefactory.categories;
-    $scope.loggedIn = thefactory.loggedIn;
-    
-    // $scope.addcart = function (a, b, c, d) {
-    //     console.log("Add to cart called!");
-    //     thefactory.addProdToCart(a, b, c, d);
-    //     console.log(thefactory.cart_items);
-    // };
-    //
+
+    $scope.categoriesByName = {};
+    $scope.categoriesById = {};
+    $scope.products = {};
+    $http.get('/api/products/categories').success(function (data) {
+        var list = data;
+        list.forEach(function (e) {
+            $scope.categoriesByName[e.name] = $scope.categoriesById[e.id] = {
+                'id': e.id,
+                'name': e.name,
+                'count': 0
+            };
+        })
+        console.log($scope.categoriesById);
+        $http.get('/api/products').success(function (data) {
+            var list = data;
+            list.forEach(function (e) {
+                console.log(e);
+                e.image = "/images/img" + (e.id % 7) + ".jpg"
+                e.cat_name = $scope.categoriesById[e.categoryID] ?  $scope.categoriesById[e.categoryID].name : "";
+                $scope.categoriesById[e.categoryID] && ($scope.categoriesById[e.categoryID].count += 1);
+                $scope.products[e.id] = e;
+                appFactory.products[e.id] = e;
+            })
+        });
+    });
+
+    $scope.addcart = function (id) {
+        console.log("Add to cart called!");
+        console.log(appFactory.products)
+        console.log('id' + id)
+        appFactory.addProdToCart(id);
+        console.log(appFactory.cart_items);
+    };
+
 })
 
-app.controller('CartController', function ($scope, thefactory) {
-    $scope.list = thefactory.cart;
+app.controller('CartController', function ($scope, appFactory) {
+    $scope.list = appFactory.cart;
 
-    $scope.cart_amount = thefactory.setCartAmount();
+    $scope.cart_count = function () {
+        return appFactory.cart_items;
+    }
+
+    $scope.cart_amount = function () {
+        return appFactory.getCartAmount();
+    }
+
     $scope.increaseQuantity = function (a) {
         console.log("Quantity Change");
-        thefactory.changeQuantity(a, 1);
-        $scope.cart_amount = thefactory.setCartAmount();
+        appFactory.changeQuantity(a, 1);
+        // $scope.cart_amount = appFactory.setCartAmount();
     };
 
     $scope.decreaseQuantity = function (a) {
         console.log("Quantity Change");
-        thefactory.changeQuantity(a, -1);
-        $scope.cart_amount = thefactory.setCartAmount();
+        appFactory.changeQuantity(a, -1);
+        // $scope.cart_amount = appFactory.setCartAmount();
     };
 })
 
-app.controller('ProductController', function ($scope, thefactory, $routeParams) {
-    this.product_id = $routeParams.id;
-    this.loggedIn = thefactory.loggedIn;
-    console.log(this.product_id);
-    var product_id = Number(this.product_id);
-    this.product = thefactory.findProduct(product_id);
-    console.log(this.product)
-    $scope.addcart = function (a, b, c, d) {
-        console.log("Add to cart called!");
-        thefactory.addProdToCart(a, b, c, d);
-        console.log(thefactory.cart_items);
-    };
-})
+app.controller('SubmitController', function ($scope, appFactory,$http) {
+    $scope.order_summary = appFactory.cart;
+    $scope.order_total = appFactory.cart_amount;
+    $scope.submitted = false;
 
-app.controller('LoginController', function ($scope, thefactory) {
-    var rootURL = "/choc/rest/api";
+    success_msg = "Thank You For Shopping :)"
+    failure_msg = "Something went wrong, Please try again :("
 
-    $('#loginBtn').click(function () {
-        console.log("Login Button Clicked");
-        $scope.loginUser($('#emailId').val(), $('#password').val());
-        return false;
-    });
+    $scope.orderTotal = function () {
+        return appFactory.cart_amount;
+    }
 
-    $scope.loginUser = function (uname, pass) {
-        console.log("Login Fuction Called");
-        var item = {};
-        item["username"] = uname;
-        item["password"] = pass;
-        var credentials = JSON.stringify(item);
-        console.log(item['username'] + ' ' + item['password']);
-        $.ajax({
-            type: 'POST',
-            url: rootURL + '/login',
-            contentType: 'application/json',
-            data: credentials,
-            success: renderList
-        });
+    $scope.clear_summary = function () {
+        $scope.order_summary = []
+        $scope.order_total = 0;
+        $scope.submitted = false;
+    }
 
-        function renderList(data) {
-            console.log("Got data");
-            console.log(data);
-            if (data['status'] == 'success') {
-                thefactory.user = data['name'];
-                thefactory.setLoggedIn(true);
+    $scope.submit = function () {
+        products = $scope.order_summary.map(function (e) {
+            return {
+                "product_id": e.productId,
+                "qty": e.count,
+                "sell_price": e.price
             }
-            console.log(thefactory.user);
-            console.log(thefactory.loggedIn);
-            location.href = "#/";
+        })
+        console.log(products)
+        data = {
+            "user_name": $scope.username,
+            "address": $scope.address,
+            "contact": $scope.contact,
+            "mode": "COD",
+            "email": $scope.email,
+            "products": products
         }
+        console.log(data)
+
+        $http({
+            url: '/api/orders/submit',
+            method: "POST",
+            data: data
+        }).then(function (response) {
+            $scope.submitted = true;
+            appFactory.resetCart()
+            $scope.message = success_msg
+        }, function (response) {
+            $scope.submitted = true;
+            $scope.message = failure_msg
+        });
     }
-
-    $('#signupBtn').click(function () {
-        console.log("Signup Button Clicked");
-        signupUser($('#email').val(), $('#password2').val(), $('#fname').val(), $('#lname').val());
-        console.log('pass: ' + $('#password2').val());
-        return false;
-    })
-
-    function signupUser(email, pass1, fname, lname) {
-        if (true) {
-            var item = {};
-            item['email_id'] = email;
-            item['password'] = pass1;
-            console.log(item['password']);
-            item['firstname'] = fname;
-            item['lastname'] = lname;
-            item['contact_no'] = null;
-            var jsonObj = JSON.stringify(item);
-            $.ajax({
-                type: 'POST',
-                url: rootURL + '/signup',
-                contentType: 'application/json',
-                data: jsonObj
-            });
-        }
-        else {
-            console.log('password doesnt match:' + pass1 + ' ' + pass2)
-        }
-
-    }
+    console.log($scope.order);
 })
+
+app.controller('ProductController', function ($scope, appFactory, $routeParams, $http) {
+    this.product_id = $routeParams.id;
+    $scope.product = {}
+    $scope.product =  appFactory.findProduct(this.product_id);
+    if($scope.product == null) {
+        $http.get('/api/products/' + this.product_id).success(function (data) {
+            $scope.product = data;
+        });
+    }
+
+    this.loggedIn = appFactory.loggedIn;
+    console.log(this.product_id);
+    this.product_id = Number(this.product_id);
+
+    $scope.addcart = function (id) {
+        console.log("Add to cart called!");
+        appFactory.addProdToCart(id);
+        console.log(appFactory.cart_items);
+    };
+
+    $scope.cart_count = function () {
+        return appFactory.cart_items;
+    }
+
+    $scope.selectProduct = function (id, price, name, image) {
+        console.log("Add to cart called!");
+        appFactory.addProdToCart(id, price, name, image);
+        console.log(appFactory.cart_items);
+    };
+})
+
+app.controller('FeedbackController', function ($scope, appFactory) {
+    $scope.feedback_sent = function () {
+        return appFactory.feedback_sent;
+    }
+    $scope.submit = function () {
+        appFactory.feedback_sent = true;
+    }
+    $scope.msg = "Thank You for the feedback :)"
+})
+
+
 
 app.config(function ($routeProvider) {
     $routeProvider
@@ -242,25 +295,25 @@ app.config(function ($routeProvider) {
                 controller: 'CartController',
                 templateUrl: 'partials/cart.html'
             })
-        .when('/wishlist',
+        .when('/checkout',
             {
-                controller: 'WishlistController',
-                templateUrl: 'partials/wishlist.html'
+                templateUrl: 'partials/checkout.html'
             })
-        .when('/login',
+        .when('/feedback',
             {
-                templateUrl: 'partials/login.html'
+                controller: 'FeedbackController',
+                templateUrl: 'partials/feedback.html'
             })
+        .when('/error',
+            {
+                templateUrl: '404.html'
+            })
+
 });
 
 $('#sl2').slider();
 
-var RGBChange = function () {
-    $('#RGB').css('background', 'rgb(' + r.getValue() + ',' + g.getValue() + ',' + b.getValue() + ')')
-};
-
 /*scroll to top*/
-
 
 $(document).ready(function () {
     $(function () {
@@ -271,10 +324,10 @@ $(document).ready(function () {
             scrollSpeed: 300, // Speed back to top (ms)
             easingType: 'linear', // Scroll to top easing (see http://easings.net/)
             animation: 'fade', // Fade, slide, none
-            animationSpeed: 200, // Animation in speed (ms)
+            animationSpeed: 100, // Animation in speed (ms)
             scrollTrigger: false, // Set a custom triggering element. Can be an HTML string or jQuery object
             //scrollTarget: false, // Set a custom target element for scrolling to the top
-            scrollText: 'Cart', // Text for element, can contain HTML
+            scrollText: 'Shopping Cart', // Text for element, can contain HTML
             scrollTitle: false, // Set a custom <a> title if required.
             scrollImg: false, // Set true to use image
             activeOverlay: false, // Set CSS color to display scrollUp active point, e.g '#00FFFF'

@@ -1,0 +1,135 @@
+<div>
+    <header id="header" ng-controller="NavbarController"><!--header-->
+        <div class="header_top"><!--header_top-->
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="contactinfo">
+                            <ul class="nav nav-pills">
+                                <li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
+                                <li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="social-icons pull-right">
+                            <ul class="nav navbar-nav">
+                                <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                                <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                <li><a href=""><i class="fa fa-linkedin"></i></a></li>
+                                <li><a href=""><i class="fa fa-dribbble"></i></a></li>
+                                <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--/header_top-->
+
+        <div class="header-middle"><!--header-middle-->
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="logo pull-left">
+                            <a href="#/"><img src="../images/home/logo.png" alt=""/></a>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="shop-menu pull-right">
+                            <ul class="nav navbar-nav">
+                                <!-- <li><a href=""><i class="fa fa-user"></i> Account</a></li> -->
+                                <li ng-show="loggedIn"><a href="#/wishlist"><i class="fa fa-star"></i> Wishlist</a></li>
+                                <li ng-show="loggedIn"><a href=""><i class="fa fa-crosshairs"></i> Checkout</a></li>
+                                <li><a href="#/cart"><i class="fa fa-shopping-cart"></i> Cart <span class="badge">{{cart_count()}}</span></a></li>
+                                <li><a href="#/feedback"><i class="fa fa-lock"></i> Give Feedback</a></li>
+                                <li ng-show="loggedIn"><a href=""><i class="fa fa-lock"></i>{{username}}</a></li>
+                                <li ng-show="loggedIn" ng-click="logout()"><a href="#/">Logout</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--/header-middle-->
+
+        <div class="header-bottom"><!--header-bottom-->
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="mainmenu pull-left">
+                            <ul class="nav navbar-nav collapse navbar-collapse">
+                                <li><a href="#/" class="active">Home</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--/header-bottom-->
+    </header><!--/header-->
+
+    <div class="container" ng-controller="SubmitController">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="novalidate signup-form"><!--sign up form-->
+                    <h2>Fill the order details to place the order...</h2>
+                    <form action="#" id="submit-form">
+                        <input ng-disabled="submitted" ng-required="true" type="text" placeholder="Name:"
+                               ng-model="username"/>
+                        <input ng-disabled="submitted" ng-required="true" type="email" placeholder="Email Address"
+                               ng-model="email"/>
+                        <input ng-disabled="submitted" ng-required="true" type="number" placeholder="Contact No"
+                               ng-model="contact"/>
+                        <textarea ng-disabled="submitted" ng-required="true" name="address"
+                                  placeholder="Shipping Address" ng-model="address"></textarea>
+                    </form>
+                    <p ng-show="!submitted" class="btn btn-default" ng-click="submit()">Submit</p>
+                </div><!--/sign up form-->
+            </div>
+
+            <div class="col-md-8">
+                <div class="signup-form">
+                    <h2>Order Summary</h2>
+                </div>
+                <div class="table-responsive cart_info">
+                    <table class="table table-condensed">
+                        <thead>
+                        <tr class="cart_menu">
+                            <td class="product-image-wrapper">Item</td>
+                            <td></td>
+                            <td class="brands-name">Name</td>
+                            <td class="price">Price</td>
+                            <td class="quantity">Quantity</td>
+                            <td class="total">Total</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="pro in order_summary">
+                            <td class="product-image-wrapper"><a href=""><img src="{{pro.image}}" height=50 alt=""></a>
+                            </td>
+                            <td></td>
+                            <td class="brands-name">{{pro.name}}</td>
+                            <td class="cart_price">Rs {{pro.price}}</td>
+                            <td class="cart_quantity">{{pro.count}}</td>
+                            <td class="cart_total">{{pro.totCost}}</td>
+                        </tr>
+                        <tr class="cart_menu">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td> Order Total:</td>
+                            <td class="total">Rs: {{orderTotal().toFixed(2)}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div ng-show="submitted" class="footer col-md-12">
+                <h2 align="center">
+                    <b>{{message}}</b>
+                </h2>
+                <h2 align="center"><a href="#/" ng-click="clear_summary()" class="btn btn-default">Explore the Store</a>
+                </h2>
+            </div>
+        </div>
+    </div>
+</div>

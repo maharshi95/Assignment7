@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp" ng-controller="productController" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>My AngularJS App</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/normalize.css">
+    <link rel="stylesheet" href="bower_components/html5-boilerplate/dist/css/main.css">
+    <link rel="stylesheet" href="app.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="offcanvas.css">
+
+    <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+</head>
+
+<body>
+
+<nav class="navbar navbar-fixed-top navbar-inverse">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">EMart</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="#">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div><!-- /.nav-collapse -->
+    </div><!-- /.container -->
+</nav><!-- /.navbar -->
+
+<div class="container">
+
+    <div class="row row-offcanvas row-offcanvas-right">
+
+        <div class="col-md-12 col-sm-9">
+            <p class="pull-right visible-xs">
+                <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
+            </p>
+            <div class="jumbotron">
+                <h1>Brand New Products!</h1>
+                <p>Site description will go here. A brief summary on current discounts and offers</p>
+            </div>
+
+            <div class=" col-md-4" ng-repeat="product in products">
+                <div class="item">
+                    <div class="thumbnail">
+                        <img class="group list-group-image" src="http://placehold.it/400x250/000/fff" alt="" />
+                        <div class="caption">
+                            <h4 class="group inner list-group-item-heading">
+                                {{ product.name | limitTo: 20 }} {{product.name.length > 20 ? '...' : ''}}</h4>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <p class="lead"> Rs {{ product.sellPrice.toFixed(2)}}</p>
+                                </div>
+                                <div class="col-md-3">
+                                    <a class="btn btn-success" href="http://www.jquery2dotnet.com">Add to cart</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!--/row-->
+        </div><!--/.col-xs-12.col-sm-9-->
+
+        <!--<div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">-->
+            <!--<div class="list-group">-->
+                <!--<a href="#" class="list-group-item active">Link</a>-->
+                <!--<a href="#" class="list-group-item">Link</a>-->
+                <!--<a href="#" class="list-group-item">Link</a>-->
+                <!--<a href="#" class="list-group-item">Link</a>-->
+                <!--<a href="#" class="list-group-item">Link</a>-->
+                <!--<a href="#" class="list-group-item">Link</a>-->
+                <!--<a href="#" class="list-group-item">Link</a>-->
+                <!--<a href="#" class="list-group-item">Link</a>-->
+                <!--<a href="#" class="list-group-item">Link</a>-->
+                <!--<a href="#" class="list-group-item">Link</a>-->
+            <!--</div>-->
+        <!--</div>&lt;!&ndash;/.sidebar-offcanvas&ndash;&gt;-->
+    </div><!--/row-->
+
+    <hr>
+
+
+<!--<div>-->
+    <!--<ul class="list-group">-->
+        <!--<li class="list-group-item" ng-repeat="prod in  products">-->
+            <!--<div class="panel-heading">{{prod.code}}</div>-->
+            <!--<div class="panel-body">{{prod.description}}</div>-->
+        <!--</li>-->
+    <!--</ul>-->
+    <!--&lt;!&ndash;<button ng-click="getProducts()"> get Products</button>&ndash;&gt;-->
+<!--</div>-->
+
+<!--<div ng-controller="HelloController">-->
+    <!--<h2>Hey {{helloTo.title}}, lets learn Web Dev</h2>-->
+<!--</div>-->
+
+<!--<ul class="menu">-->
+    <!--<li><a href="#/view1">view1</a></li>-->
+    <!--<li><a href="#/view2">view2</a></li>-->
+<!--</ul>-->
+
+<!--<div ng-view></div>-->
+
+
+<!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>-->
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/angular-route/angular-route.js"></script>
+<script src="app.js"></script>
+<script src="view1/view1.js"></script>
+<script src="view2/view2.js"></script>
+<script src="components/version/version.js"></script>
+<script src="components/version/version-directive.js"></script>
+<script src="components/version/interpolate-filter.js"></script>
+<script src="main.js"></script>
+</body>
+</html>

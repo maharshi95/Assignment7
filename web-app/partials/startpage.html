@@ -40,9 +40,8 @@
                                 <!-- <li><a href=""><i class="fa fa-user"></i> Account</a></li> -->
                                 <li ng-show="loggedIn"><a href="#/wishlist"><i class="fa fa-star"></i> Wishlist</a></li>
                                 <li ng-show="loggedIn"><a href=""><i class="fa fa-crosshairs"></i> Checkout</a></li>
-                                <li ng-show="loggedIn"><a href="#/cart"><i class="fa fa-shopping-cart"></i> Cart</a>
-                                </li>
-                                <li ng-hide="loggedIn"><a href="#/login"><i class="fa fa-lock"></i> Login</a></li>
+                                <li><a href="#/cart"><i class="fa fa-shopping-cart"></i> Cart <span class="badge">{{cart_count()}}</span></a></li>
+                                <li><a href="#/feedback"><i class="fa fa-lock"></i> Give Feedback</a></li>
                                 <li ng-show="loggedIn"><a href=""><i class="fa fa-lock"></i>{{username}}</a></li>
                                 <li ng-show="loggedIn" ng-click="logout()"><a href="#/">Logout</a></li>
                             </ul>
@@ -59,11 +58,6 @@
                         <div class="mainmenu pull-left">
                             <ul class="nav navbar-nav collapse navbar-collapse">
                                 <li><a href="#/" class="active">Home</a></li>
-                                <li class="dropdown"><a href="">Chocolates<i class="fa fa-angle-down"></i></a>
-                                    <ul role="menu" class="sub-menu">
-                                        <li ng-repeat="choc in chocolate"><a href="">{{choc.name}}</a></li>
-                                    </ul>
-                                </li>
                             </ul>
                         </div>
                     </div>
@@ -72,58 +66,62 @@
         </div><!--/header-bottom-->
     </header><!--/header-->
 
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
-        <!-- Indicators -->
-        <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-            <li data-target="#myCarousel" data-slide-to="1"></li>
-            <li data-target="#myCarousel" data-slide-to="2"></li>
-        </ol>
-        <div class="carousel-inner" role="listbox">
-            <div class="item active">
-                <img class="first-slide" src="../images/home/image1.jpg" alt="First slide">
-                <div class="container">
-                    <div class="carousel-caption">
-                        <h1>Fulfill your Inner Dark Temptations</h1>
-                        <h2 class="hello">Who'll fall in Love, i'd rather fall in chocolate.</h2>
-                        <p><a class="btn btn-lg btn-primary" href="" role="button">Buy Now</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <img class="second-slide" src="../images/home/image3.jpg" alt="Second slide">
-                <div class="container">
-                    <div class="carousel-caption">
-                        <h1>Deadly chocolate</h1>
-                        <p></p>
-                        <p><a class="btn btn-lg btn-primary" href="" role="button">Buy Now</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="item">
-                <img class="third-slide" src="../images/home/image.jpg" alt="Third slide">
-                <div class="container">
-                    <div class="carousel-caption">
-                        <h1>Sinfully chocolaty</h1>
-                        <p></p>
-                        <p><a class="btn btn-lg btn-primary" href="" role="button">Buy Now</a></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div><!-- /.carousel -->
+    <!--<div id="myCarousel" class="carousel slide" data-ride="carousel">-->
+        <!--&lt;!&ndash; Indicators &ndash;&gt;-->
+        <!--<ol class="carousel-indicators">-->
+            <!--<li data-target="#myCarousel" data-slide-to="0" class="active"></li>-->
+            <!--<li data-target="#myCarousel" data-slide-to="1"></li>-->
+            <!--<li data-target="#myCarousel" data-slide-to="2"></li>-->
+        <!--</ol>-->
+        <!--<div class="carousel-inner" role="listbox">-->
+            <!--<div class="item active">-->
+                <!--<img class="first-slide" src="../images/home/image1.jpg" alt="First slide">-->
+                <!--<div class="container">-->
+                    <!--<div class="carousel-caption">-->
+                        <!--<h1>Fulfill your Inner Dark Temptations</h1>-->
+                        <!--<h2 class="hello">Who'll fall in Love, i'd rather fall in chocolate.</h2>-->
+                        <!--<p><a class="btn btn-lg btn-primary" href="" role="button">Buy Now</a></p>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="item">-->
+                <!--<img class="second-slide" src="../images/home/image3.jpg" alt="Second slide">-->
+                <!--<div class="container">-->
+                    <!--<div class="carousel-caption">-->
+                        <!--<h1>Deadly chocolate</h1>-->
+                        <!--<p></p>-->
+                        <!--<p><a class="btn btn-lg btn-primary" href="" role="button">Buy Now</a></p>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="item">-->
+                <!--<img class="third-slide" src="../images/home/image.jpg" alt="Third slide">-->
+                <!--<div class="container">-->
+                    <!--<div class="carousel-caption">-->
+                        <!--<h1>Sinfully chocolaty</h1>-->
+                        <!--<p></p>-->
+                        <!--<p><a class="btn btn-lg btn-primary" href="" role="button">Buy Now</a></p>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>&lt;!&ndash; /.carousel &ndash;&gt;-->
 
     <section>
         <div class="container">
             <div class="row">
                 <div class="col-sm-3">
                     <div class="left-sidebar">
-                        <h2>Category</h2>
-                        <div class="panel-group category-products" id="accordian"
-                             ng-controller="CategoriesController as cc">
-                            <div class="panel panel-default" ng-repeat="cat in cc.categories">
+                        <h2>Categories</h2>
+                        <div class="panel-group category-products" id="accordian">
+                            <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="">{{cat.name}}</a></h4>
+                                    <h4 class="panel-title check-box"><a href="" ng-click="deselect()"> All </a></h4>
+                                </div>
+                            </div>
+                            <div class="panel panel-default" ng-repeat="(id,cat) in categoriesById">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title"><a href="" ng-click="select(cat.name)">{{cat.name}} <span class="badge"> {{cat.count}}</span> </a></h4>
                                 </div>
                             </div>
                         </div><!--/category-products-->
@@ -134,26 +132,23 @@
                 <div class="col-sm-9 padding-right">
                     <div class="features_items"><!--features_items-->
                         <h2 class="title text-center">Features Items</h2>
-                        <div class="col-sm-4" ng-repeat="prod in products">
+                        <div class="col-sm-4" style="min-height: 350; max-height: 350;" ng-repeat="(id,prod) in products | filter:search">
                             <div class="product-image-wrapper">
                                 <div class="single-products">
                                     <div class="productinfo text-center">
-                                        <img src="http://www.tresemme.com/Images/1338/1338-349818-460x300.png"/>
+                                        <img src="{{prod.image}}"/>
                                         <h3>{{prod.name}}</h3>
                                         <h4>Rs {{prod.sellPrice.toFixed(2)}}</h4>
-                                        <a href="" ng-show="loggedIn" class="btn btn-default add-to-cart"
-                                           ng-click="addcart(prod.productId,prod.price,prod.name,prod.img)"><i
-                                                class="fa fa-shopping-cart"></i>Add to cart</a>
                                     </div>
                                     <div class="product-overlay">
                                         <div class="overlay-content">
                                             <h2>{{prod.name}}</h2>
                                             <p>Rs {{prod.sellPrice.toFixed(2)}}</p>
-                                            <a href="#/product/{{prod.id}}" class="btn btn-default add-to-cart"></i>
+                                            <a ng-click="" href="#/product/{{prod.id}}" class="btn btn-default add-to-cart"></i>
                                                 View Product Details</a>
-                                            <p ng-show="loggedIn" class="btn btn-default add-to-cart"
-                                               ng-click="addcart(prod.productId,prod.price,prod.name,prod.img)"><i
-                                                    class="fa fa-shopping-cart"></i>Add to cart</p>
+                                            <a class="btn btn-default add-to-cart"
+                                               ng-click="addcart(prod.id)"><i
+                                                    class="fa fa-shopping-cart"></i>Add to cart</a>
                                         </div>
                                     </div>
                                 </div>
